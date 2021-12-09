@@ -71,7 +71,8 @@ public class ItemSalis extends Item {
         }
         // Time
         case 1 : {
-            world.setWorldTime(world.isDaytime() ? 14000 : 24000);
+            long worldTime = world.provider.getWorldTime();
+            world.setWorldTime(worldTime + (24000 - (worldTime % 24000)));
             player.playSound("thaumcraft:wind", 0.3F, 1.0F + world.rand.nextFloat() * 0.5F);
             player.inventory.decrStackSize(player.inventory.currentItem, 1);
             return stack;
