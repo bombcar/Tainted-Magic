@@ -40,6 +40,7 @@ import taintedmagic.client.model.ModelSaya;
 import taintedmagic.common.TaintedMagic;
 import taintedmagic.common.helper.TaintedMagicHelper;
 import taintedmagic.common.items.wand.foci.ItemFocusShockwave;
+import taintedmagic.common.handler.ConfigHandler;
 import taintedmagic.common.network.PacketHandler;
 import taintedmagic.common.network.PacketKatanaAttack;
 import thaumcraft.api.IRepairable;
@@ -242,7 +243,7 @@ public class ItemKatana extends Item implements IWarpingGear, IRepairable, IRend
                 case 0 : // fireball
                 {
                     final EntityExplosiveOrb proj = new EntityExplosiveOrb(world, player);
-                    proj.strength = getAttackDamage(stack) * .25F;
+                    proj.strength = getAttackDamage(stack) * ConfigHandler.VOLCANIC_INSCRIPTION_PROJECTILE_DAMAGE_MODIFIER;
                     proj.posX += proj.motionX;
                     proj.posY += proj.motionY;
                     proj.posZ += proj.motionZ;

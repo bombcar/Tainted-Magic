@@ -4,6 +4,7 @@ import java.util.List;
 
 import baubles.api.BaubleType;
 import baubles.api.IBauble;
+import travellersgear.api.IActiveAbility;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,7 +22,7 @@ import thaumcraft.api.IWarpingGear;
 import thaumcraft.api.ItemRunic;
 import thaumcraft.common.Thaumcraft;
 
-public class ItemVoidwalkerSash extends ItemRunic implements IRunicArmor, IWarpingGear, IBauble {
+public class ItemVoidwalkerSash extends ItemRunic implements IActiveAbility, IRunicArmor, IWarpingGear, IBauble {
 
     public static final String TAG_MODE = "mode";
 
@@ -96,23 +97,28 @@ public class ItemVoidwalkerSash extends ItemRunic implements IRunicArmor, IWarpi
     @Override
     public ItemStack onItemRightClick (final ItemStack stack, final World world, final EntityPlayer player) {
         if (!world.isRemote && player.isSneaking()) {
-            if (stack.stackTagCompound == null) {
-                stack.setTagCompound(new NBTTagCompound());
-                stack.stackTagCompound.setBoolean(TAG_MODE, true);
-            }
-            if (stack.stackTagCompound != null) {
-                stack.stackTagCompound.setBoolean(TAG_MODE, !stack.stackTagCompound.getBoolean(TAG_MODE));
-                if (isSpeedEnabled(stack)) {
-                    HUDHandler.displayString(EnumChatFormatting.GREEN + StatCollector.translateToLocal("text.sash.speed.on"),
-                            300, false);
-                }
-                else {
-                    HUDHandler.displayString(EnumChatFormatting.RED + StatCollector.translateToLocal("text.sash.speed.off"),
-                            300, false);
-                }
-            }
+            toggle(stack);
         }
         return stack;
+    }
+
+    private void toggle(ItemStack stack) {
+        if (stack.stackTagCompound == null)
+        {
+            stack.setTagCompound(new NBTTagCompound());
+            stack.stackTagCompound.setBoolean(TAG_MODE, false);
+        }
+        if (stack.stackTagCompound != null) {
+            stack.stackTagCompound.setBoolean(TAG_MODE, !stack.stackTagCompound.getBoolean(TAG_MODE));
+            if (isSpeedEnabled(stack)) {
+                HUDHandler.displayString(EnumChatFormatting.GREEN + StatCollector.translateToLocal("text.sash.speed.on"),
+                        300, false);
+            }
+            else {
+                HUDHandler.displayString(EnumChatFormatting.RED + StatCollector.translateToLocal("text.sash.speed.off"),
+                        300, false);
+            }
+        }
     }
 
     /**
@@ -122,6 +128,18 @@ public class ItemVoidwalkerSash extends ItemRunic implements IRunicArmor, IWarpi
         if (stack.stackTagCompound == null)
             return true;
         return stack.stackTagCompound.getBoolean(TAG_MODE);
+    }
+
+    @Override
+    public boolean canActivate(EntityPlayer entityPlayer, ItemStack itemStack, boolean b) {
+        return true;
+    }
+
+    @Override
+    public void activate(EntityPlayer entityPlayer, ItemStack itemStack) {
+        if (!entityPlayer.worldObj.isRemote) {
+            toggle(itemStack);
+        }
     }
 
 }
